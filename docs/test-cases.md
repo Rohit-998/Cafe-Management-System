@@ -32,26 +32,26 @@
 > **Note:** TC-03 and TC-04 errors came from browser-level HTML validation (required/minlength); zod validation also runs on the server.
 
 ### Defects Found
-- **CMS-24** — Add Menu Item page accessible without login (High, Open). Logged in Jira and docs/bugs.md. To be fixed on Fri 23 Oct and retested.
+- **CMS-24** — Add Menu Item page accessible without login (High). Logged in Jira and docs/bugs.md. **Fixed** on 30 Oct 2026 (commit "CMS-24: protect /menu/add, redirect to /login when not logged in") and **retested: Pass** (see TC-23).
 
 ## Login & Registration Module (CMS-2)
 
 | Test Case ID | Module | Test Scenario | Test Data | Expected Result | Actual Result | Status |
 |---|---|---|---|---|---|---|
-| TC-11 | Register | Register with valid details | Name: "Test User", Email: test1@example.com, Password: "secret1", Confirm: "secret1" | Account created, redirected to /menu, navbar shows "Hi, Test User" and Logout; new row in profiles table with full_name "Test User" | | |
-| TC-12 | Register | Register with an email that already exists | Name: "Test User", Email: test1@example.com (from TC-11), Password: "secret1", Confirm: "secret1" | Error under Email: "Email already exists", no new account created | | |
-| TC-13 | Register | Register with invalid email format | Name: "Test User", Email: "abc", Password: "secret1", Confirm: "secret1" | Error under Email: "Enter a valid email", form not submitted | | |
-| TC-14 | Register | Submit with all fields empty | All fields blank | Errors shown: "Name must be at least 2 characters", "Email is required", "Password must be at least 6 characters"; form not submitted | | |
-| TC-15 | Register | Password 5 characters (BVA - below min) | Email: test2@example.com, Password/Confirm: "abcde" | Error under Password: "Password must be at least 6 characters" | | |
-| TC-16 | Register | Password 6 characters (BVA - at min) | Name: "Six Char", Email: test3@example.com, Password/Confirm: "abcdef" | Account created, redirected to /menu | | |
-| TC-17 | Register | Password 64 characters (BVA - at max) | Name: "Max Pass", Email: test4@example.com, Password/Confirm: "Abcdefgh" repeated 8 times (64 chars) | Account created, redirected to /menu | | |
-| TC-18 | Register | Password 65 characters (BVA - above max) | Email: test5@example.com, Password/Confirm: "Abcdefgh" x8 + "X" (65 chars) | Error under Password: "Password must be at most 64 characters" | | |
-| TC-19 | Register | Passwords do not match | Email: test6@example.com, Password: "secret1", Confirm: "secret2" | Error under Confirm Password: "Passwords do not match", no account created | | |
-| TC-20 | Login | Login with valid credentials | Email: test1@example.com, Password: "secret1" | Redirected to /menu, navbar shows "Hi, Test User" and Logout | | |
-| TC-21 | Login | Login with wrong password | Email: test1@example.com, Password: "wrong123" | Error: "Invalid credentials", user stays on /login, navbar still shows Login/Register | | |
-| TC-22 | Logout | Logout while logged in | Logged in as test1@example.com, click Logout | Redirected to / (home), navbar shows Login and Register again | | |
-| TC-23 | Integration | Open /menu/add while logged out (CMS-24 retest) | Logged out, type http://localhost:3000/menu/add in address bar | Redirected to /login, Add Menu Item form is NOT shown | | |
-| TC-24 | Integration | Log in, then add a menu item | Login as test1@example.com / "secret1", open /menu/add, Name: "Masala Chai", Price: 40, Category: Beverages | Item saved, redirected to /menu, "Masala Chai" listed; in Supabase menu_items row created_by = test1's user id | | |
+| TC-11 | Register | Register with valid details | Name: "Test User", Email: test1@example.com, Password: "secret1", Confirm: "secret1" | Account created, redirected to /menu, navbar shows "Hi, Test User" and Logout; new row in profiles table with full_name "Test User" | As expected: account created, redirected to /menu, navbar showed "Hi, Test User" and Logout, profiles row created | Pass |
+| TC-12 | Register | Register with an email that already exists | Name: "Test User", Email: test1@example.com (from TC-11), Password: "secret1", Confirm: "secret1" | Error under Email: "Email already exists", no new account created | As expected: "Email already exists" shown, no new account | Pass |
+| TC-13 | Register | Register with invalid email format | Name: "Test User", Email: "abc", Password: "secret1", Confirm: "secret1" | Error under Email: "Enter a valid email", form not submitted | As expected: "Enter a valid email" shown, form not submitted | Pass |
+| TC-14 | Register | Submit with all fields empty | All fields blank | Errors shown: "Name must be at least 2 characters", "Email is required", "Password must be at least 6 characters"; form not submitted | As expected: all three errors shown, form not submitted | Pass |
+| TC-15 | Register | Password 5 characters (BVA - below min) | Email: test2@example.com, Password/Confirm: "abcde" | Error under Password: "Password must be at least 6 characters" | As expected: "Password must be at least 6 characters" shown | Pass |
+| TC-16 | Register | Password 6 characters (BVA - at min) | Name: "Six Char", Email: test3@example.com, Password/Confirm: "abcdef" | Account created, redirected to /menu | As expected: account created, redirected to /menu | Pass |
+| TC-17 | Register | Password 64 characters (BVA - at max) | Name: "Max Pass", Email: test4@example.com, Password/Confirm: "Abcdefgh" repeated 8 times (64 chars) | Account created, redirected to /menu | As expected: account created, redirected to /menu | Pass |
+| TC-18 | Register | Password 65 characters (BVA - above max) | Email: test5@example.com, Password/Confirm: "Abcdefgh" x8 + "X" (65 chars) | Error under Password: "Password must be at most 64 characters" | As expected: "Password must be at most 64 characters" shown | Pass |
+| TC-19 | Register | Passwords do not match | Email: test6@example.com, Password: "secret1", Confirm: "secret2" | Error under Confirm Password: "Passwords do not match", no account created | As expected: "Passwords do not match" shown, no account created | Pass |
+| TC-20 | Login | Login with valid credentials | Email: test1@example.com, Password: "secret1" | Redirected to /menu, navbar shows "Hi, Test User" and Logout | As expected: redirected to /menu, navbar showed "Hi, Test User" and Logout | Pass |
+| TC-21 | Login | Login with wrong password | Email: test1@example.com, Password: "wrong123" | Error: "Invalid credentials", user stays on /login, navbar still shows Login/Register | As expected: "Invalid credentials" shown, stayed on /login | Pass |
+| TC-22 | Logout | Logout while logged in | Logged in as test1@example.com, click Logout | Redirected to / (home), navbar shows Login and Register again | As expected: redirected to /, navbar showed Login and Register | Pass |
+| TC-23 | Integration | Open /menu/add while logged out (CMS-24 retest) | Logged out, type http://localhost:3000/menu/add in address bar | Redirected to /login, Add Menu Item form is NOT shown | As expected: redirected to /login, form not shown | Pass |
+| TC-24 | Integration | Log in, then add a menu item | Login as test1@example.com / "secret1", open /menu/add, Name: "Masala Chai", Price: 40, Category: Beverages | Item saved, redirected to /menu, "Masala Chai" listed; in Supabase menu_items row created_by = test1's user id | As expected: "Masala Chai" saved and listed in /menu, created_by set to test1's user id | Pass |
 
 ### Testing Techniques Used (Login & Registration)
 - **Functional Testing**: TC-11, TC-20, TC-22 (register, login, logout work)
@@ -59,6 +59,15 @@
 - **Equivalence Partitioning**: Valid class (TC-11, TC-16, TC-17, TC-20) vs Invalid class (TC-12, TC-13, TC-14, TC-15, TC-18, TC-19, TC-21)
 - **Validation Testing**: TC-13, TC-14, TC-15, TC-18, TC-19
 - **Integration Testing**: TC-23, TC-24 (Login module protects the Menu module)
+
+### Test Summary (Login & Registration)
+- **Total test cases**: 14 (TC-11 to TC-24)
+- **Passed**: 14
+- **Failed**: 0
+- **Tested by**: Rohit
+- **Date**: 30 Oct 2026
+- **Environment**: Next.js + Supabase running on localhost ("Confirm email" turned OFF in Supabase Auth)
+- **Unit tests**: 32 Vitest tests, all passing (`npm test`)
 
 ### Unit Tests (Vitest)
 Automated tests for the zod validators live in `src/lib/validations/auth.test.ts` and `src/lib/validations/menu.test.ts`. Run with `npm test`.
