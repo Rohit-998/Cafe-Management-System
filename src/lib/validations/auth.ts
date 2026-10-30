@@ -39,6 +39,14 @@ export const registerSchema = z
 
 export type RegisterInput = z.infer<typeof registerSchema>;
 
+// Login form: same email and password rules as registration
+export const loginSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+});
+
+export type LoginInput = z.infer<typeof loginSchema>;
+
 // Helper: turn zod issues into a simple { fieldName: "first error message" } object
 export function toFieldErrors(
   issues: { path: PropertyKey[]; message: string }[]

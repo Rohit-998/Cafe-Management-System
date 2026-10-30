@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { registerSchema, toFieldErrors } from "@/lib/validations/auth";
@@ -57,6 +58,7 @@ export async function registerUser(
     return { errors: { email: "Email already exists" } };
   }
 
-  // 4. Success: user is now logged in, go to the menu
+  // 4. Success: user is now logged in, refresh the navbar and go to the menu
+  revalidatePath("/", "layout");
   redirect("/menu");
 }

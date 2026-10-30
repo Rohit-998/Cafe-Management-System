@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Navbar from "@/components/Navbar";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -17,27 +17,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {/* Shared navbar shown on every page */}
-        <nav className="navbar">
-          <Link href="/" className="navbar-brand">
-            ☕ Cafe Management
-          </Link>
-
-          <ul className="navbar-links">
-            <li>
-              <Link href="/">Home</Link>
-            </li>
-            <li>
-              <Link href="/menu">Menu</Link>
-            </li>
-            <li>
-              <Link href="/login">Login</Link>
-            </li>
-            <li>
-              <Link href="/register">Register</Link>
-            </li>
-          </ul>
-        </nav>
+        {/* Shared navbar shown on every page (changes when logged in) */}
+        <Navbar />
 
         {children}
       </body>
