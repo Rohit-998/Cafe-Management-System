@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { menuItemSchema } from "@/lib/validations/menu";
 
@@ -13,10 +14,22 @@ export type AddMenuItemResult = {
 // Server action: validates input and inserts a new menu item into Supabase.
 // Called by the form on /menu/add.
 // Jira: CMS-4 (Add Menu Item), sub-task CMS-16 (Code add item).
+// Bug CMS-24 fix: only logged-in users can add items.
 export async function addMenuItem(
   _prevState: AddMenuItemResult | null,
   formData: FormData
 ): Promise<AddMenuItemResult> {
+  // 0. Check login first. A server action can be called directly, even
+  //    without opening the page, so it needs its own check.
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   // 1. Extract form values
   const rawData = {
     name: formData.get("name") as string,
@@ -40,14 +53,13 @@ export async function addMenuItem(
     return { success: false, errors: fieldErrors };
   }
 
-  // 3. Insert into Supabase
-  const supabase = await createClient();
-
+  // 3. Insert into Supabase (created_by = the logged-in user)
   const { error } = await supabase.from("menu_items").insert({
     name: parsed.data.name,
     description: parsed.data.description || null,
     price: parsed.data.price,
     category: parsed.data.category || null,
+    created_by: user.id,
   });
 
   if (error) {
