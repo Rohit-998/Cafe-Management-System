@@ -22,7 +22,7 @@ export const menuItemSchema = z.object({
 
   // Price: required, must be > 0 and <= 10000
   price: z
-    .number({ invalid_type_error: "Price must be a number" })
+    .number({ error: "Price must be a number" })
     .gt(0, "Price must be greater than 0")
     .lte(10000, "Price must be at most 10000"),
 
